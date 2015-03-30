@@ -1,0 +1,8 @@
+target/*
+build/*
+
+!build/.gitkeep
+!build/production/.gitkeep
+!build/test/.gitkeep
+!build/experimentals/.gitkeep
+!target/.gitkeep
