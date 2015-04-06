@@ -31,10 +31,10 @@ CXXFLAGS += -std=c++1y -g -O -Wall -Weffc++ -pedantic  \
 	-Wvariadic-macros \
 	-Wwrite-strings
 LDFLAGS +=
-program_LIBRARIES :=
+program_LIBRARIES := -lboost_filesystem -lboost_system -L $(BOOST_LIBS)/lib
 program_TEST_LIBRARIES :=
 program_EXPERIMENTALS_LIBRARIES :=
-program_INCLUDES :=
+program_INCLUDES := -I headers
 program_TEST_INCLUDES :=
 program_EXPERIMENTALS_INCLUDES :=
 

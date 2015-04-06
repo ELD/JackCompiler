@@ -1,10 +1,13 @@
-#include <iostream>
-
-using std::cout;
-using std::cin;
-using std::endl;
+#include "../headers/includes.h"
+#include "../headers/JackTokenizer.h"
 
 int main()
 {
-    cout << "Test!" << std::endl;
+    fstream file("test.jack");
+    JackTokenizer tokens(file);
+
+    auto tokensCollection = tokens.getTokens();
+    for (auto token : tokensCollection) {
+        cout << token << endl;
+    }
 }
