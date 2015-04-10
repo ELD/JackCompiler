@@ -3,15 +3,20 @@
 
 #include "includes.h"
 
+using TokenDeque = deque<pair<string,string>>;
+
 class JackTokenizer {
     public:
-        JackTokenizer(istream&);
-        const vector<string>& getTokens() const { return tokens; }
+        JackTokenizer(string&);
+        bool hasMoreTokens() { return tokens.size() > 0 ? true : false; }
+        const TokenDeque& getTokens() const { return tokens; }
     private:
-        //void stripComments();
-        //void Onelineify(string&);
+        void tokenize();
+        void stripComments(string&);
+        void stripWhitespace(string&);
 
-        vector<string> tokens;
+        ifstream file;
+        TokenDeque tokens;
 };
 
 #endif
