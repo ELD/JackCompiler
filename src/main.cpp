@@ -8,6 +8,6 @@ int main()
 
     auto tokensCollection = tokens.getTokens();
     for (auto token : tokensCollection) {
-        cout << "Type: " << token.first << "\tToken: " << token.second << endl;
+        cout << "Token: " << token << endl;
     }
 }

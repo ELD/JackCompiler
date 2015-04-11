@@ -2,7 +2,7 @@
 #define _KEYWORDS_H_
 #undef NULL
 
-enum class Keywords {
+enum class KeywordType : unsigned short {
     CLASS = 0,
     METHOD,
     FUNCTION,

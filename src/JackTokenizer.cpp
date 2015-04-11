@@ -39,14 +39,14 @@ void JackTokenizer::tokenize()
             } else if (stringLiteralLoc != string::npos && inStringLiteral) {
                 inStringLiteral = false;
                 stringLiteral += " " + t;
-                tokens.emplace_back(make_pair("test", stringLiteral));
+                tokens.emplace_back(stringLiteral);
                 continue;
             } else if (inStringLiteral) {
                 stringLiteral += " " + t;
                 continue;
             }
 
-            tokens.emplace_back(make_pair("test", t));
+            tokens.emplace_back(t);
         }
     }
 }
