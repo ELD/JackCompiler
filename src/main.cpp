@@ -2,6 +2,7 @@
 #include "../headers/JackTokenizer.h"
 
 void printTokenXml(string, JackTokenizer&);
+// void printParserXml(string, JackTokenizer&);
 
 int main(int argc, char** argv)
 {
@@ -13,30 +14,11 @@ int main(int argc, char** argv)
     string inputFile{argv[1]};
     JackTokenizer tokens(inputFile);
 
-    printTokenXml("OutT.xml", tokens);
-
-    // while (tokens.hasMoreTokens()) {
-    //     auto token = tokens.nextToken();
-    //     auto tokenType = tokens.tokenType();
-    //     if (tokenType == TokenType::KEYWORD) {
-    //         auto keyword = tokens.keywordType();
-    //         cout << "Type: " << tokenType << "\tKeyword: " << keyword << "\tToken: " << token << endl;
-    //     } else if (tokenType == TokenType::SYMBOL) {
-    //         auto symbol = tokens.symbol();
-    //         cout << "Type: " << tokenType << "\tSymbol: " << symbol << "\tToken: " << token << endl;
-    //     } else if (tokenType == TokenType::IDENTIFIER) {
-    //         auto identifier = tokens.identifier();
-    //         cout << "Type: " << tokenType << "\tIdentifier: " << identifier << "\tToken: " << token << endl;
-    //     } else if (tokenType == TokenType::INT_CONST) {
-    //         auto intConst = tokens.intVal();
-    //         cout << "Type: " << tokenType << "\tInteger Constant: " << intConst << "\tToken: " << token << endl;
-    //     } else if (tokenType == TokenType::STRING_CONST) {
-    //         auto stringConst = tokens.stringVal();
-    //         cout << "Type: " << tokenType << "\tString Constant: " << stringConst << "\tToken: " << token << endl;
-    //     } else {
-    //         cout << "Type: " << tokenType << "\tToken: " << token << endl;
-    //     }
-    // }
+    // printTokenXml("OutT.xml", tokens);
+    auto files = getFilesInProject(inputFile);
+    for (auto& file : files) {
+        cout << file.string() << endl;
+    }
 }
 
 void printTokenXml(string outFileName, JackTokenizer& tokens)
@@ -68,3 +50,8 @@ void printTokenXml(string outFileName, JackTokenizer& tokens)
     }
     outXml << "</tokens>" << endl;
 }
+
+// void printParserXml(string outFileName, JackTokenizer& tokens)
+// {
+//
+// }
