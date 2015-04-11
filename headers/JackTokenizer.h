@@ -9,9 +9,14 @@ class JackTokenizer {
     public:
         JackTokenizer(string&);
         bool hasMoreTokens() { return tokens.size() > 0 ? true : false; }
-        string getNextToken();
+        string nextToken();
         string peekAhead();
         TokenType tokenType();
+        KeywordType keywordType();
+        char symbol();
+        string identifier();
+        int intVal();
+        string stringVal();
         const TokenDeque& getTokens() const { return tokens; }
     private:
         void tokenize();
@@ -21,6 +26,7 @@ class JackTokenizer {
 
         ifstream file;
         TokenDeque tokens;
+        string currentToken;
 };
 
 #endif

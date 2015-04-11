@@ -4,22 +4,22 @@ ostream& operator<<(ostream& os, TokenType const& tokenType)
 {
     switch (tokenType) {
         case TokenType::KEYWORD:
-            os << "TokenType::KEYWORD";
+            os << "keyword";
             break;
         case TokenType::SYMBOL:
-            os << "TokenType::SYMBOL";
+            os << "symbol";
             break;
         case TokenType::IDENTIFIER:
-            os << "TokenType::IDENTIFIER";
+            os << "identifier";
             break;
         case TokenType::INT_CONST:
-            os << "TokenType::INT_CONST";
+            os << "integerConstant";
             break;
         case TokenType::STRING_CONST:
-            os << "TokenType::STRING_CONST";
+            os << "stringConstant";
             break;
         default:
-            os << "TokenType::UNKNOWN";
+            os << "unknown";
             break;
     }
 
