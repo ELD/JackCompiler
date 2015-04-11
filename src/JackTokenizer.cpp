@@ -21,8 +21,8 @@ string JackTokenizer::peekAhead()
 
 TokenType JackTokenizer::tokenType()
 {
-    vector<string> keywords{"class", "constructor", "function", "method", "static", "var", "int", "char", "boolean", "void", "true", "false", "null", "this", "let", "do", "if", "else", "while", "return"};
-    string symbols{"{ } ( ) [ ] . , ; + - * / & | < > = -"};
+    vector<string> keywords{"class", "constructor", "function", "method", "field", "static", "var", "int", "char", "boolean", "void", "true", "false", "null", "this", "let", "do", "if", "else", "while", "return"};
+    string symbols{"{ } ( ) [ ] . , ; + - * / & | < > = ~"};
     if (find(keywords.begin(), keywords.end(), currentToken) != keywords.end()) {
         return TokenType::KEYWORD;
     } else if (symbols.find(currentToken) != string::npos) {
@@ -130,7 +130,7 @@ void JackTokenizer::tokenize()
         stripWhitespace(line);
 
         auto multilineCommentLoc = line.find("/*");
-        if (multilineCommentLoc != string::npos) {
+        if (multilineCommentLoc != string::npos || multilineComment) {
             multilineComment = true;
             auto endMultilineCommentLoc = line.find("*/");
             if (endMultilineCommentLoc != string::npos) {
@@ -142,7 +142,7 @@ void JackTokenizer::tokenize()
 
         bool inStringLiteral{false};
         string stringLiteral{""};
-        boost::char_separator<char> c{" ",".=()[];,"};
+        boost::char_separator<char> c{" ","~.=()[];,"};
         boost::tokenizer<boost::char_separator<char>> tizer{line, c};
         for (const auto& t : tizer) {
             auto stringLiteralLoc = t.find("\"");
