@@ -11,6 +11,7 @@
 #include <sstream>
 #include <vector>
 #include "token_types.h"
+#include "keywords.h"
 
 using namespace boost;
 using namespace std;
