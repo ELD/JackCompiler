@@ -1,7 +1,7 @@
 #include "../headers/JackTokenizer.h"
 
 /*********** PUBLIC METHODS ***********/
-JackTokenizer::JackTokenizer(string& input) : file(input), currentToken("")
+JackTokenizer::JackTokenizer(istream& input) : file(input), currentToken("")
 {
     tokenize();
 }

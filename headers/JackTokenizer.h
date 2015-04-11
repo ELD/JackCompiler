@@ -7,7 +7,7 @@ using TokenDeque = deque<string>;
 
 class JackTokenizer {
     public:
-        JackTokenizer(string&);
+        JackTokenizer(istream&);
         bool hasMoreTokens() { return tokens.size() > 0 ? true : false; }
         string nextToken();
         string peekAhead();
@@ -24,7 +24,7 @@ class JackTokenizer {
         void stripWhitespace(string&);
         void getTokenType(string&);
 
-        ifstream file;
+        istream& file;
         TokenDeque tokens;
         string currentToken;
 };

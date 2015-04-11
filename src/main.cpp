@@ -1,8 +1,8 @@
 #include "../headers/includes.h"
 #include "../headers/JackTokenizer.h"
+#include "../headers/CompilationEngine.h"
 
 void printTokenXml(string, JackTokenizer&);
-// void printParserXml(string, JackTokenizer&);
 
 int main(int argc, char** argv)
 {
@@ -11,13 +11,14 @@ int main(int argc, char** argv)
         return -1;
     }
 
-    string inputFile{argv[1]};
-    JackTokenizer tokens(inputFile);
-
-    // printTokenXml("OutT.xml", tokens);
-    auto files = getFilesInProject(inputFile);
+    auto files = getFilesInProject(argv[1]);
     for (auto& file : files) {
-        cout << file.string() << endl;
+        ifstream inputFile{file.string()};
+        JackTokenizer tokens(inputFile);
+        string filename = file.filename().string();
+        filename = filename.substr(0, filename.find_last_of(".")) + "T.xml";
+        cout << "input: " << file.string() << "\toutput: " << filename << endl;
+        printTokenXml(filename, tokens);
     }
 }
 
@@ -50,8 +51,3 @@ void printTokenXml(string outFileName, JackTokenizer& tokens)
     }
     outXml << "</tokens>" << endl;
 }
-
-// void printParserXml(string outFileName, JackTokenizer& tokens)
-// {
-//
-// }
