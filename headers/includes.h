@@ -10,6 +10,7 @@
 #include <regex>
 #include <sstream>
 #include <vector>
+#include "token_types.h"
 
 using namespace boost;
 using namespace std;

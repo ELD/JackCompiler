@@ -26,10 +26,26 @@ void JackTokenizer::tokenize()
             continue;
         }
 
-        boost::char_separator<char> c {" ",".=()[];"};
+        bool inStringLiteral{false};
+        string stringLiteral{""};
+        boost::char_separator<char> c{" ",".=()[];,"};
         boost::tokenizer<boost::char_separator<char>> tizer{line, c};
         for (const auto& t : tizer) {
-            // cout << t << endl;
+            auto stringLiteralLoc = t.find("\"");
+            if (stringLiteralLoc != string::npos && !inStringLiteral) {
+                inStringLiteral = true;
+                stringLiteral += t;
+                continue;
+            } else if (stringLiteralLoc != string::npos && inStringLiteral) {
+                inStringLiteral = false;
+                stringLiteral += " " + t;
+                tokens.emplace_back(make_pair("test", stringLiteral));
+                continue;
+            } else if (inStringLiteral) {
+                stringLiteral += " " + t;
+                continue;
+            }
+
             tokens.emplace_back(make_pair("test", t));
         }
     }
