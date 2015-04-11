@@ -1,10 +1,45 @@
 #include "../headers/JackTokenizer.h"
 
+/*********** PUBLIC METHODS ***********/
 JackTokenizer::JackTokenizer(string& input) : file(input)
 {
     tokenize();
 }
 
+string JackTokenizer::getNextToken()
+{
+    string token = tokens.front();
+    tokens.pop_front();
+    return token;
+}
+
+string JackTokenizer::peekAhead()
+{
+    return tokens.front();
+}
+
+TokenType JackTokenizer::tokenType()
+{
+    string keywords{"class constructor function method field static var int char boolean void true false null this let do if else while  return"};
+    string symbols{"{ } ( ) [ ] . , ; + - * / & | < > = -"};
+    if (keywords.find(tokens.front()) != string::npos) {
+        return TokenType::KEYWORD;
+    } else if (symbols.find(tokens.front()) != string::npos) {
+        return TokenType::SYMBOL;
+    } else if (tokens.front().find("\"") != string::npos) {
+        return TokenType::STRING_CONST;
+    } else {
+        try {
+            stoi(tokens.front());
+        } catch (invalid_argument exc) {
+
+        }
+    }
+
+    return TokenType::IDENTIFIER;
+}
+
+/*********** PRIVATE METHODS ***********/
 void JackTokenizer::tokenize()
 {
 

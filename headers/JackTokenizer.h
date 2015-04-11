@@ -9,8 +9,9 @@ class JackTokenizer {
     public:
         JackTokenizer(string&);
         bool hasMoreTokens() { return tokens.size() > 0 ? true : false; }
-        // void advance();
-        // TokenType tokenType();
+        string getNextToken();
+        string peekAhead();
+        TokenType tokenType();
         const TokenDeque& getTokens() const { return tokens; }
     private:
         void tokenize();

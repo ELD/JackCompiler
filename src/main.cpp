@@ -6,8 +6,9 @@ int main()
     string file = "test.jack";
     JackTokenizer tokens(file);
 
-    auto tokensCollection = tokens.getTokens();
-    for (auto token : tokensCollection) {
-        cout << "Token: " << token << endl;
+    while (tokens.hasMoreTokens()) {
+        auto tokenType = tokens.tokenType();
+        auto token = tokens.getNextToken();
+        cout << "Type: " << tokenType << "\tToken: " << token << endl;
     }
 }

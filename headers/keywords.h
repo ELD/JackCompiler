@@ -26,4 +26,6 @@ enum class KeywordType : unsigned short {
     THIS
 };
 
+std::ostream& operator<<(std::ostream&, KeywordType const&);
+
 #endif
