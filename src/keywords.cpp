@@ -4,87 +4,87 @@ ostream& operator<<(ostream& os, KeywordType const& keywords)
 {
     switch (keywords) {
         case KeywordType::CLASS:
-            os << "KeywordType::CLASS";
+            os << "class";
             break;
 
         case KeywordType::METHOD:
-            os << "KeywordType::METHOD";
+            os << "method";
             break;
 
         case KeywordType::FUNCTION:
-            os << "KeywordType::FUNCTION";
+            os << "function";
             break;
 
         case KeywordType::CONSTRUCTOR:
-            os << "KeywordType::CONSTRUCTOR";
+            os << "constructor";
             break;
 
         case KeywordType::INT:
-            os << "KeywordType::INT";
+            os << "int";
             break;
 
         case KeywordType::BOOLEAN:
-            os << "KeywordType::BOOLEAN";
+            os << "boolean";
             break;
 
         case KeywordType::CHAR:
-            os << "KeywordType::CHAR";
+            os << "char";
             break;
 
         case KeywordType::VOID:
-            os << "KeywordType::VOID";
+            os << "void";
             break;
 
         case KeywordType::VAR:
-            os << "KeywordType::VAR";
+            os << "var";
             break;
 
         case KeywordType::STATIC:
-            os << "KeywordType::STATIC";
+            os << "static";
             break;
 
         case KeywordType::FIELD:
-            os << "KeywordType::FIELD";
+            os << "field";
             break;
 
         case KeywordType::LET:
-            os << "KeywordType::LET";
+            os << "let";
             break;
 
         case KeywordType::DO:
-            os << "KeywordType::DO";
+            os << "do";
             break;
 
         case KeywordType::IF:
-            os << "KeywordType::IF";
+            os << "if";
             break;
 
         case KeywordType::ELSE:
-            os << "KeywordType::ELSE";
+            os << "else";
             break;
 
         case KeywordType::WHILE:
-            os << "KeywordType::WHILE";
+            os << "while";
             break;
 
         case KeywordType::RETURN:
-            os << "KeywordType::RETURN";
+            os << "return";
             break;
 
         case KeywordType::TRUE:
-            os << "KeywordType::TRUE";
+            os << "true";
             break;
 
         case KeywordType::FALSE:
-            os << "KeywordType::FALSE";
+            os << "false";
             break;
 
         case KeywordType::NULL:
-            os << "KeywordType::NULL";
+            os << "null";
             break;
 
         case KeywordType::THIS:
-            os << "KeywordType::THIS";
+            os << "this";
             break;
     }
     return os;

@@ -8,6 +8,7 @@ class CompilationEngine {
 public:
     CompilationEngine(istream&, ostream&);
     void compileClass();
+    void compileClassVarDec();
 private:
     ostream& outputFile;
     JackTokenizer tokenizer;

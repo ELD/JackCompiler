@@ -9,11 +9,12 @@ class JackTokenizer {
     public:
         JackTokenizer(istream&);
         bool hasMoreTokens() { return tokens.size() > 0 ? true : false; }
-        string nextToken();
+        void advanceToken();
+        string getToken();
         string peekAhead();
         TokenType tokenType();
         KeywordType keywordType();
-        char symbol();
+        string symbol();
         string identifier();
         int intVal();
         string stringVal();

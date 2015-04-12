@@ -6,12 +6,16 @@ JackTokenizer::JackTokenizer(istream& input) : file(input), currentToken("")
     tokenize();
 }
 
-string JackTokenizer::nextToken()
+void JackTokenizer::advanceToken()
 {
     string token = tokens.front();
-    tokens.pop_front();
     currentToken = token;
-    return token;
+    tokens.pop_front();
+}
+
+string JackTokenizer::getToken()
+{
+    return currentToken;
 }
 
 string JackTokenizer::peekAhead()
@@ -49,7 +53,7 @@ KeywordType JackTokenizer::keywordType()
         return KeywordType::METHOD;
     } else if (currentToken == "function") {
         return KeywordType::FUNCTION;
-    } else if (currentToken == "consructor") {
+    } else if (currentToken == "constructor") {
         return KeywordType::CONSTRUCTOR;
     } else if (currentToken == "int") {
         return KeywordType::INT;
@@ -88,9 +92,18 @@ KeywordType JackTokenizer::keywordType()
     return KeywordType::THIS;
 }
 
-char JackTokenizer::symbol()
+string JackTokenizer::symbol()
 {
-    return currentToken[0];
+    auto symbol = currentToken.substr(0, 1);
+    if (symbol == ">") {
+        symbol = "&gt;";
+    } else if (symbol == "<") {
+        symbol = "&lt;";
+    } else if (symbol == "&") {
+        symbol = "&amp;";
+    }
+
+    return symbol;
 }
 
 string JackTokenizer::identifier()

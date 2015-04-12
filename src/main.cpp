@@ -32,20 +32,12 @@ void printTokenXml(string outFileName, JackTokenizer& tokens)
     ofstream outXml(outFileName);
     outXml << "<tokens>" << endl;
     while (tokens.hasMoreTokens()) {
-        auto token = tokens.nextToken();
+        tokens.advanceToken();
         auto tokenType = tokens.tokenType();
         if (tokenType == TokenType::SYMBOL) {
-            if (token == ">") {
-                outXml << "<" << tokenType << "> &gt; </" << tokenType << ">" << endl;
-            } else if (token == "<") {
-                outXml << "<" << tokenType << "> &lt; </" << tokenType << ">" << endl;
-            } else if (token == "&") {
-                outXml << "<" << tokenType << "> &amp; </" << tokenType << ">" << endl;
-            } else {
-                outXml << "<" << tokenType << ">" << tokens.symbol() << "</" << tokenType << ">" << endl;
-            }
+            outXml << "<" << tokenType << ">" << tokens.symbol() << "</" << tokenType << ">" << endl;
         } else if (tokenType == TokenType::KEYWORD) {
-            outXml << "<" << tokenType << ">" << token << "</" << tokenType << ">" << endl;
+            outXml << "<" << tokenType << ">" << tokens.keywordType() << "</" << tokenType << ">" << endl;
         } else if (tokenType == TokenType::IDENTIFIER) {
             outXml << "<" << tokenType << ">" << tokens.identifier() << "</" << tokenType << ">" << endl;
         } else if (tokenType == TokenType::INT_CONST) {
