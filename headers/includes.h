@@ -12,6 +12,7 @@
 #include <sstream>
 #include <vector>
 #include <utility>
+#include <cassert>
 #include "token_types.h"
 #include "keywords.h"
 #include "utilities.h"

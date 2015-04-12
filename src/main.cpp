@@ -13,12 +13,17 @@ int main(int argc, char** argv)
 
     auto files = getFilesInProject(argv[1]);
     for (auto& file : files) {
+        // ifstream inputFile{file.string()};
+        // JackTokenizer tokens(inputFile);
+        // string filename = file.filename().string();
+        // filename = filename.substr(0, filename.find_last_of(".")) + "T.xml";
+        // cout << "input: " << file.string() << "\toutput: " << filename << endl;
+        // printTokenXml(filename, tokens);
         ifstream inputFile{file.string()};
-        JackTokenizer tokens(inputFile);
         string filename = file.filename().string();
-        filename = filename.substr(0, filename.find_last_of(".")) + "T.xml";
-        cout << "input: " << file.string() << "\toutput: " << filename << endl;
-        printTokenXml(filename, tokens);
+        filename = filename.substr(0, filename.find_last_of(".")) + ".xml";
+        ofstream outputFile{filename};
+        CompilationEngine jackCompiler(inputFile, outputFile);
     }
 }
 
