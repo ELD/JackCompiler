@@ -12,6 +12,7 @@ private:
     void compileClassVarDec();
     void compileSubroutine();
     void compileParameterList();
+    void compileVarDec();
     ostream& outputFile;
     JackTokenizer tokenizer;
     string className;
