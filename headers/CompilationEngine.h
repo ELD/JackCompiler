@@ -7,11 +7,14 @@
 class CompilationEngine {
 public:
     CompilationEngine(istream&, ostream&);
+private:
     void compileClass();
     void compileClassVarDec();
-private:
+    void compileSubroutine();
+    void compileParameterList();
     ostream& outputFile;
     JackTokenizer tokenizer;
+    string className;
 };
 
 #endif

@@ -14,7 +14,7 @@
 #include <utility>
 #include <cassert>
 #include "token_types.h"
-#include "keywords.h"
+#include "keyword_types.h"
 #include "utilities.h"
 
 using namespace boost;
