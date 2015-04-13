@@ -47,14 +47,17 @@ void CompilationEngine::compileClass()
                 tokenizer.keywordType() == KeywordType::CONSTRUCTOR)) {
             compileSubroutine();
         } else {
+            if (tokenizer.getTokens().size() == 0) {
+                break;
+            }
             // break;
             continue;
         }
     }
 
     // Closing the class
-    // assert(tokenizer.tokenType() == TokenType::SYMBOL);
-    // assert(tokenizer.symbol() == "}");
+    assert(tokenizer.tokenType() == TokenType::SYMBOL);
+    assert(tokenizer.symbol() == "}");
 
     outputFile << "</class>";
 }
@@ -177,12 +180,23 @@ void CompilationEngine::compileSubroutine()
         << tokenizer.symbol()
         << "</" << tokenizer.tokenType() << ">" << endl;
 
+    while (true) {
+        tokenizer.advanceToken();
+        cout << tokenizer.getToken() << endl;
+        if (tokenizer.tokenType() == TokenType::SYMBOL) {
+            outputFile << "<" << tokenizer.tokenType() << ">"
+                << tokenizer.symbol()
+                << "</" << tokenizer.tokenType() << ">" << endl;
+            break;
+        }
 
-    tokenizer.advanceToken();
-    assert(tokenizer.tokenType() == TokenType::KEYWORD);
+        assert(tokenizer.tokenType() == TokenType::KEYWORD);
 
-    if (tokenizer.keywordType() == KeywordType::VAR) {
-        compileVarDec();
+        if (tokenizer.keywordType() == KeywordType::VAR) {
+            compileVarDec();
+        } else {
+            compileStatements();
+        }
     }
 
     outputFile << "</subroutineBody>" << endl;
@@ -275,4 +289,21 @@ void CompilationEngine::compileVarDec()
     }
 
     outputFile << "</varDec>" << endl;
+}
+
+void CompilationEngine::compileStatements()
+{
+    assert(tokenizer.tokenType() == TokenType::KEYWORD);
+
+    if (tokenizer.keywordType() == KeywordType::DO) {
+        // compileDo();
+    } else if (tokenizer.keywordType() == KeywordType::LET) {
+        // compileLet();
+    } else if (tokenizer.keywordType() == KeywordType::WHILE) {
+        // compileWhile();
+    } else if (tokenizer.keywordType() == KeywordType::RETURN) {
+        // compileReturn();
+    } else if (tokenizer.keywordType() == KeywordType::IF) {
+        // compileIf();
+    }
 }

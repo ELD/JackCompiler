@@ -13,6 +13,7 @@ private:
     void compileSubroutine();
     void compileParameterList();
     void compileVarDec();
+    void compileStatements();
     ostream& outputFile;
     JackTokenizer tokenizer;
     string className;
