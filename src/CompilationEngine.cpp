@@ -50,8 +50,8 @@ void CompilationEngine::compileClass()
             if (tokenizer.getTokens().size() == 0) {
                 break;
             }
-            // break;
-            continue;
+            break;
+            // continue;
         }
     }
 
@@ -59,6 +59,9 @@ void CompilationEngine::compileClass()
     assert(tokenizer.tokenType() == TokenType::SYMBOL);
     assert(tokenizer.symbol() == "}");
 
+    outputFile << "<symbol>"
+        << tokenizer.symbol()
+        << "</symbol>" << endl;
     outputFile << "</class>";
 }
 
@@ -296,7 +299,7 @@ void CompilationEngine::compileStatements()
     assert(tokenizer.tokenType() == TokenType::KEYWORD);
 
     if (tokenizer.keywordType() == KeywordType::DO) {
-        // compileDo();
+        compileDo();
     } else if (tokenizer.keywordType() == KeywordType::LET) {
         // compileLet();
     } else if (tokenizer.keywordType() == KeywordType::WHILE) {
@@ -306,4 +309,65 @@ void CompilationEngine::compileStatements()
     } else if (tokenizer.keywordType() == KeywordType::IF) {
         // compileIf();
     }
+}
+
+void CompilationEngine::compileDo()
+{
+    outputFile << "<doStatement>" << endl;
+    outputFile << "<keyword>"
+        << tokenizer.getToken()
+        << "</keyword>" << endl;
+
+    tokenizer.advanceToken();
+
+    assert(tokenizer.tokenType() == TokenType::IDENTIFIER);
+    outputFile << "<identifier>"
+        << tokenizer.identifier()
+        << "</identifier>" << endl;
+
+    tokenizer.advanceToken();
+
+    assert(tokenizer.tokenType() == TokenType::SYMBOL);
+    outputFile << "<symbol>"
+        << tokenizer.symbol()
+        << "</symbol>" << endl;
+
+    tokenizer.advanceToken();
+
+    assert(tokenizer.tokenType() == TokenType::IDENTIFIER);
+    outputFile << "<identifier>"
+        << tokenizer.identifier()
+        << "</identifier>" << endl;
+
+    tokenizer.advanceToken();
+
+    assert(tokenizer.tokenType() == TokenType::SYMBOL);
+    assert(tokenizer.symbol() == "(");
+
+    outputFile << "<symbol>"
+        << tokenizer.symbol()
+        << "</symbol>" << endl;
+
+    compileParameterList();
+    // compileExpressionList();
+
+    assert(tokenizer.tokenType() == TokenType::SYMBOL);
+    assert(tokenizer.symbol() == ")");
+    outputFile << "<symbol>"
+        << tokenizer.symbol()
+        << "</symbol>" << endl;
+
+    tokenizer.advanceToken();
+    assert(tokenizer.tokenType() == TokenType::SYMBOL);
+    assert(tokenizer.symbol() == ";");
+    outputFile << "<symbol>"
+        << tokenizer.symbol()
+        << "</symbol>" << endl;
+
+    outputFile << "</doStatement>" << endl;
+}
+
+void CompilationEngine::compileExpressionList()
+{
+
 }
