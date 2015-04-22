@@ -32,7 +32,7 @@ void printTokenXml(string outFileName, JackTokenizer& tokens)
     ofstream outXml(outFileName);
     outXml << "<tokens>" << endl;
     while (tokens.hasMoreTokens()) {
-        tokens.advanceToken();
+        tokens.advance();
         auto tokenType = tokens.tokenType();
         if (tokenType == TokenType::SYMBOL) {
             outXml << "<" << tokenType << ">" << tokens.symbol() << "</" << tokenType << ">" << endl;

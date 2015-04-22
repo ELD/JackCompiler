@@ -1,12 +1,15 @@
 #include "../headers/JackTokenizer.h"
 
+VecStr const JackTokenizer::keywords{"class", "constructor", "function", "method", "field", "static", "var", "int", "char", "boolean", "void", "true", "false", "null", "this", "let", "do", "if", "else", "while", "return"};
+string const JackTokenizer::symbols{"{ } ( ) [ ] . , ; + - * / & | < > = ~"};
+
 /*********** PUBLIC METHODS ***********/
 JackTokenizer::JackTokenizer(istream& input) : file(input), currentToken("")
 {
     tokenize();
 }
 
-void JackTokenizer::advanceToken()
+void JackTokenizer::advance()
 {
     string token = tokens.front();
     currentToken = token;
@@ -18,15 +21,80 @@ string JackTokenizer::getToken()
     return currentToken;
 }
 
-string JackTokenizer::peekAhead()
+string JackTokenizer::peek()
 {
     return tokens.front();
 }
 
+TokenType JackTokenizer::peekTokenType()
+{
+    if (find(keywords.begin(), keywords.end(), currentToken) != keywords.end()) {
+        return TokenType::KEYWORD;
+    } else if (symbols.find(currentToken) != string::npos) {
+        return TokenType::SYMBOL;
+    } else if (currentToken.find("\"") != string::npos) {
+        return TokenType::STRING_CONST;
+    } else {
+        try {
+            stoi(currentToken);
+            return TokenType::INT_CONST;
+        } catch (invalid_argument exc) {
+
+        }
+    }
+
+    return TokenType::IDENTIFIER;
+}
+
+KeywordType JackTokenizer::peekKeywordType()
+{
+    if (currentToken == "class") {
+        return KeywordType::CLASS;
+    } else if (currentToken == "method") {
+        return KeywordType::METHOD;
+    } else if (currentToken == "function") {
+        return KeywordType::FUNCTION;
+    } else if (currentToken == "constructor") {
+        return KeywordType::CONSTRUCTOR;
+    } else if (currentToken == "int") {
+        return KeywordType::INT;
+    } else if (currentToken == "boolean") {
+        return KeywordType::BOOLEAN;
+    } else if (currentToken == "char") {
+        return KeywordType::CHAR;
+    } else if (currentToken == "void") {
+        return KeywordType::VOID;
+    } else if (currentToken == "var") {
+        return KeywordType::VAR;
+    } else if (currentToken == "static") {
+        return KeywordType::STATIC;
+    } else if (currentToken == "field") {
+        return KeywordType::FIELD;
+    } else if (currentToken == "let") {
+        return KeywordType::LET;
+    } else if (currentToken == "do") {
+        return KeywordType::DO;
+    } else if (currentToken == "if") {
+        return KeywordType::IF;
+    } else if (currentToken == "else") {
+        return KeywordType::ELSE;
+    } else if (currentToken == "while") {
+        return KeywordType::WHILE;
+    } else if (currentToken == "return") {
+        return KeywordType::RETURN;
+    } else if (currentToken == "true") {
+        return KeywordType::TRUE;
+    } else if (currentToken == "false") {
+        return KeywordType::FALSE;
+    } else if (currentToken == "null") {
+        return KeywordType::NULL;
+    }
+
+    return KeywordType::THIS;
+}
+
 TokenType JackTokenizer::tokenType()
 {
-    vector<string> keywords{"class", "constructor", "function", "method", "field", "static", "var", "int", "char", "boolean", "void", "true", "false", "null", "this", "let", "do", "if", "else", "while", "return"};
-    string symbols{"{ } ( ) [ ] . , ; + - * / & | < > = ~"};
     if (find(keywords.begin(), keywords.end(), currentToken) != keywords.end()) {
         return TokenType::KEYWORD;
     } else if (symbols.find(currentToken) != string::npos) {

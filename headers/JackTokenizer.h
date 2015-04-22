@@ -3,15 +3,19 @@
 
 #include "includes.h"
 
+using VecStr = vector<string>;
+
 using TokenDeque = deque<string>;
 
 class JackTokenizer {
     public:
         JackTokenizer(istream&);
         bool hasMoreTokens() { return tokens.size() > 0 ? true : false; }
-        void advanceToken();
+        void advance();
         string getToken();
-        string peekAhead();
+        string peek();
+        TokenType peekTokenType();
+        KeywordType peekKeywordType();
         TokenType tokenType();
         KeywordType keywordType();
         string symbol();
@@ -28,6 +32,8 @@ class JackTokenizer {
         istream& file;
         TokenDeque tokens;
         string currentToken;
+        static VecStr const keywords;
+        static string const symbols;
 };
 
 #endif

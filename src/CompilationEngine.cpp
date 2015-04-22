@@ -8,7 +8,7 @@ CompilationEngine::CompilationEngine(istream& input, ostream& output) : outputFi
 void CompilationEngine::compileClass()
 {
     // Opening the class
-    tokenizer.advanceToken();
+    tokenizer.advance();
 
     outputFile << "<class>" << endl;
 
@@ -19,7 +19,7 @@ void CompilationEngine::compileClass()
         << tokenizer.keywordType()
         << "</" << tokenizer.tokenType() << ">" << endl;
 
-    tokenizer.advanceToken();
+    tokenizer.advance();
 
     assert(tokenizer.tokenType() == TokenType::IDENTIFIER);
     outputFile << "<" << tokenizer.tokenType() << ">"
@@ -27,7 +27,7 @@ void CompilationEngine::compileClass()
         << "</" << tokenizer.tokenType() << ">" << endl;
     className = tokenizer.identifier();
 
-    tokenizer.advanceToken();
+    tokenizer.advance();
     assert(tokenizer.tokenType() == TokenType::SYMBOL);
     assert(tokenizer.symbol() == "{");
 
@@ -36,7 +36,7 @@ void CompilationEngine::compileClass()
         << "</" << tokenizer.tokenType() << ">" << endl;
 
     while (tokenizer.hasMoreTokens()) {
-        tokenizer.advanceToken();
+        tokenizer.advance();
         // ClassVarDec and Subroutine Decs
         if (tokenizer.tokenType() == TokenType::KEYWORD &&
             (tokenizer.keywordType() == KeywordType::FIELD || tokenizer.keywordType() == KeywordType::STATIC)) {
@@ -77,14 +77,14 @@ void CompilationEngine::compileClassVarDec()
             << tokenizer.keywordType()
             << "</" << tokenizer.tokenType() << ">" << endl;
 
-        tokenizer.advanceToken();
+        tokenizer.advance();
         assert(tokenizer.tokenType() == TokenType::KEYWORD || tokenizer.tokenType() == TokenType::IDENTIFIER);
 
         outputFile << "<" << tokenizer.tokenType() << ">"
             << tokenizer.getToken()
             << "</" << tokenizer.tokenType() << ">" << endl;
 
-        tokenizer.advanceToken();
+        tokenizer.advance();
         assert(tokenizer.tokenType() == TokenType::IDENTIFIER);
 
         outputFile << "<" << tokenizer.tokenType() << ">"
@@ -92,7 +92,7 @@ void CompilationEngine::compileClassVarDec()
             << "</" << tokenizer.tokenType() << ">" << endl;
 
         while (true) {
-            tokenizer.advanceToken();
+            tokenizer.advance();
             if (tokenizer.tokenType() == TokenType::SYMBOL && tokenizer.symbol() == ";") {
                 outputFile << "<" << tokenizer.tokenType() << ">"
                     << tokenizer.symbol()
@@ -106,7 +106,7 @@ void CompilationEngine::compileClassVarDec()
                 << tokenizer.symbol()
                 << "</" << tokenizer.tokenType() << ">" << endl;
 
-            tokenizer.advanceToken();
+            tokenizer.advance();
             assert(tokenizer.tokenType() == TokenType::IDENTIFIER);
             outputFile << "<" << tokenizer.tokenType() << ">"
                 << tokenizer.identifier()
@@ -132,7 +132,7 @@ void CompilationEngine::compileSubroutine()
         << tokenizer.keywordType()
         << "</" << tokenizer.tokenType() << ">" << endl;
 
-    tokenizer.advanceToken();
+    tokenizer.advance();
     if (tokenizer.tokenType() == TokenType::IDENTIFIER) {
         outputFile << "<" << tokenizer.tokenType() << ">"
             << tokenizer.identifier()
@@ -149,14 +149,14 @@ void CompilationEngine::compileSubroutine()
             << "</" << tokenizer.tokenType() << ">" << endl;
     }
 
-    tokenizer.advanceToken();
+    tokenizer.advance();
     assert(tokenizer.tokenType() == TokenType::IDENTIFIER);
 
     outputFile << "<" << tokenizer.tokenType() << ">"
         << tokenizer.identifier()
         << "</" << tokenizer.tokenType() << ">" << endl;
 
-    tokenizer.advanceToken();
+    tokenizer.advance();
     assert(tokenizer.tokenType() == TokenType::SYMBOL);
     assert(tokenizer.symbol() == "(");
 
@@ -173,7 +173,7 @@ void CompilationEngine::compileSubroutine()
         << tokenizer.symbol()
         << "</" << tokenizer.tokenType() << ">" << endl;
 
-    tokenizer.advanceToken();
+    tokenizer.advance();
     assert(tokenizer.tokenType() == TokenType::SYMBOL);
     assert(tokenizer.symbol() == "{");
 
@@ -184,7 +184,7 @@ void CompilationEngine::compileSubroutine()
         << "</" << tokenizer.tokenType() << ">" << endl;
 
     while (true) {
-        tokenizer.advanceToken();
+        tokenizer.advance();
         cout << tokenizer.getToken() << endl;
         if (tokenizer.tokenType() == TokenType::SYMBOL) {
             outputFile << "<" << tokenizer.tokenType() << ">"
@@ -212,7 +212,7 @@ void CompilationEngine::compileParameterList()
     outputFile << "<parameterList>" << endl;
 
     while (true) {
-        tokenizer.advanceToken();
+        tokenizer.advance();
         if (tokenizer.tokenType() == TokenType::SYMBOL && tokenizer.symbol() == ")") {
             break;
         }
@@ -226,13 +226,13 @@ void CompilationEngine::compileParameterList()
             << tokenizer.keywordType()
             << "</" << tokenizer.tokenType() << ">" << endl;
 
-        tokenizer.advanceToken();
+        tokenizer.advance();
         assert(tokenizer.tokenType() == TokenType::IDENTIFIER);
         outputFile << "<" << tokenizer.tokenType() << ">"
             << tokenizer.identifier()
             << "</" << tokenizer.tokenType() << ">" << endl;
 
-        tokenizer.advanceToken();
+        tokenizer.advance();
         if (tokenizer.symbol() != ",") {
             break;
         }
@@ -256,20 +256,20 @@ void CompilationEngine::compileVarDec()
         << tokenizer.keywordType()
         << "</" << tokenizer.tokenType() << ">" << endl;
 
-    tokenizer.advanceToken();
+    tokenizer.advance();
     assert(tokenizer.tokenType() == TokenType::KEYWORD || tokenizer.tokenType() == TokenType::IDENTIFIER);
     outputFile << "<" << tokenizer.tokenType() << ">"
         << tokenizer.getToken()
         << "</" << tokenizer.tokenType() << ">" << endl;
 
-    tokenizer.advanceToken();
+    tokenizer.advance();
     assert(tokenizer.tokenType() == TokenType::IDENTIFIER);
     outputFile << "<" << tokenizer.tokenType() << ">"
         << tokenizer.identifier()
         << "</" << tokenizer.tokenType() << ">" << endl;
 
     while (true) {
-        tokenizer.advanceToken();
+        tokenizer.advance();
         if (tokenizer.tokenType() == TokenType::SYMBOL && tokenizer.symbol() == ";") {
             outputFile << "<" << tokenizer.tokenType() << ">"
                 << tokenizer.symbol()
@@ -284,7 +284,7 @@ void CompilationEngine::compileVarDec()
             << tokenizer.symbol()
             << "</" << tokenizer.tokenType() << ">" << endl;
 
-        tokenizer.advanceToken();
+        tokenizer.advance();
         assert(tokenizer.tokenType() == TokenType::IDENTIFIER);
         outputFile << "<" << tokenizer.tokenType() << ">"
             << tokenizer.identifier()
@@ -296,6 +296,7 @@ void CompilationEngine::compileVarDec()
 
 void CompilationEngine::compileStatements()
 {
+    outputFile << "<statements>" << endl;
     assert(tokenizer.tokenType() == TokenType::KEYWORD);
 
     if (tokenizer.keywordType() == KeywordType::DO) {
@@ -305,10 +306,11 @@ void CompilationEngine::compileStatements()
     } else if (tokenizer.keywordType() == KeywordType::WHILE) {
         // compileWhile();
     } else if (tokenizer.keywordType() == KeywordType::RETURN) {
-        // compileReturn();
+        compileReturn();
     } else if (tokenizer.keywordType() == KeywordType::IF) {
         // compileIf();
     }
+    outputFile << "</statements>" << endl;
 }
 
 void CompilationEngine::compileDo()
@@ -318,28 +320,30 @@ void CompilationEngine::compileDo()
         << tokenizer.getToken()
         << "</keyword>" << endl;
 
-    tokenizer.advanceToken();
+    tokenizer.advance();
 
     assert(tokenizer.tokenType() == TokenType::IDENTIFIER);
     outputFile << "<identifier>"
         << tokenizer.identifier()
         << "</identifier>" << endl;
 
-    tokenizer.advanceToken();
+    tokenizer.advance();
 
-    assert(tokenizer.tokenType() == TokenType::SYMBOL);
-    outputFile << "<symbol>"
-        << tokenizer.symbol()
-        << "</symbol>" << endl;
+    if (tokenizer.tokenType() == TokenType::SYMBOL && tokenizer.symbol() == ".") {
+        assert(tokenizer.tokenType() == TokenType::SYMBOL);
+        outputFile << "<symbol>"
+            << tokenizer.symbol()
+            << "</symbol>" << endl;
 
-    tokenizer.advanceToken();
+        tokenizer.advance();
 
-    assert(tokenizer.tokenType() == TokenType::IDENTIFIER);
-    outputFile << "<identifier>"
-        << tokenizer.identifier()
-        << "</identifier>" << endl;
+        assert(tokenizer.tokenType() == TokenType::IDENTIFIER);
+        outputFile << "<identifier>"
+            << tokenizer.identifier()
+            << "</identifier>" << endl;
+    }
 
-    tokenizer.advanceToken();
+    tokenizer.advance();
 
     assert(tokenizer.tokenType() == TokenType::SYMBOL);
     assert(tokenizer.symbol() == "(");
@@ -357,7 +361,7 @@ void CompilationEngine::compileDo()
         << tokenizer.symbol()
         << "</symbol>" << endl;
 
-    tokenizer.advanceToken();
+    tokenizer.advance();
     assert(tokenizer.tokenType() == TokenType::SYMBOL);
     assert(tokenizer.symbol() == ";");
     outputFile << "<symbol>"
@@ -367,7 +371,62 @@ void CompilationEngine::compileDo()
     outputFile << "</doStatement>" << endl;
 }
 
-void CompilationEngine::compileExpressionList()
+void CompilationEngine::compileLet()
+{
+    outputFile << "<letStatement>" << endl;
+
+    outputFile << "<keyword>"
+        << tokenizer.getToken()
+        << "</keyword>" << endl;
+
+    tokenizer.advance();
+    assert(tokenizer.tokenType() == TokenType::IDENTIFIER);
+
+    outputFile << "<identifier>"
+        << tokenizer.identifier()
+        << "</identifier>" << endl;
+
+    tokenizer.advance();
+    if (tokenizer.tokenType() == TokenType::SYMBOL) {
+        assert(tokenizer.symbol() == "[");
+        outputFile << "<symbol>"
+            << tokenizer.symbol()
+            << "</symbol>" << endl;
+
+        while (true) {
+            tokenizer.advance();
+            if (tokenizer.symbol() == "]") {
+                break;
+            }
+            compileExpression();
+        }
+    }
+
+    outputFile << "</letStatement>" << endl;
+}
+
+void CompilationEngine::compileReturn()
+{
+    outputFile << "<returnStatement>" << endl;
+
+    outputFile << "<keyword>"
+        << tokenizer.getToken()
+        << "</keyword>" << endl;
+
+    tokenizer.advance();
+
+    if (tokenizer.tokenType() == TokenType::SYMBOL) {
+        outputFile << "<symbol>"
+            << tokenizer.symbol()
+            << "</symbol>" << endl;
+    } else {
+        // compileExpression();
+    }
+
+    outputFile << "</returnStatement>" << endl;
+}
+
+void CompilationEngine::compileExpression()
 {
 
 }

@@ -15,11 +15,11 @@ private:
     void compileVarDec();
     void compileStatements();
     void compileDo();
-    // void compileLet();
+    void compileLet();
     // void compileWhile();
-    // void compileReturn();
+    void compileReturn();
     // void compileIf();
-    // void compileExpression();
+    void compileExpression();
     // void compileTerm();
     // void compileExpressionList();
 
