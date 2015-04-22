@@ -27,7 +27,8 @@ class JackTokenizer {
         void tokenize();
         void stripComments(string&);
         void stripWhitespace(string&);
-        void getTokenType(string&);
+        TokenType getTokenType(string const&);
+        KeywordType getKeywordType(string const&);
 
         istream& file;
         TokenDeque tokens;
