@@ -1,6 +1,6 @@
-#include "../headers/includes.h"
-#include "../headers/JackTokenizer.h"
-#include "../headers/CompilationEngine.h"
+#include "../headers/includes.hpp"
+#include "../headers/JackTokenizer.hpp"
+#include "../headers/CompilationEngine.hpp"
 
 void printTokenXml(string, JackTokenizer&);
 

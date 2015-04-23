@@ -1,4 +1,4 @@
-#include "../headers/utilities.h"
+#include "../headers/utilities.hpp"
 
 vector<path> getFilesInProject(string const& pathName)
 {

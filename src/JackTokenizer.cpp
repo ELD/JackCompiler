@@ -1,4 +1,4 @@
-#include "../headers/JackTokenizer.h"
+#include "../headers/JackTokenizer.hpp"
 
 VecStr const JackTokenizer::keywords{"class", "constructor", "function", "method", "field", "static", "var", "int", "char", "boolean", "void", "true", "false", "null", "this", "let", "do", "if", "else", "while", "return"};
 string const JackTokenizer::symbols{"{ } ( ) [ ] . , ; + - * / & | < > = ~"};
