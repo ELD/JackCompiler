@@ -386,15 +386,26 @@ void CompilationEngine::compileLet()
         << tokenizer.identifier()
         << "</" << tokenizer.tokenType() << ">" << endl;
 
-    tokenizer.advance();
-    BOOST_ASSERT(tokenizer.tokenType() == TokenType::SYMBOL);
+    if (tokenizer.peek() == "[") {
+        tokenizer.advance();
+        BOOST_ASSERT(tokenizer.tokenType() == TokenType::SYMBOL);
+        outputFile << "<" << tokenizer.tokenType() << ">"
+            << tokenizer.symbol()
+            << "</" << tokenizer.tokenType() << ">" << endl;
 
-    if (tokenizer.symbol() == "[") {
         compileExpression();
+
         tokenizer.advance();
         BOOST_ASSERT(tokenizer.tokenType() == TokenType::SYMBOL);
         BOOST_ASSERT(tokenizer.symbol() == "]");
+        outputFile << "<" << tokenizer.tokenType() << ">"
+            << tokenizer.symbol()
+            << "</" << tokenizer.tokenType() << ">" << endl;
     }
+
+    tokenizer.advance();
+    BOOST_ASSERT(tokenizer.tokenType() == TokenType::SYMBOL);
+    BOOST_ASSERT(tokenizer.symbol() == "=");
 
     outputFile << "<" << tokenizer.tokenType() << ">"
         << tokenizer.symbol()
@@ -540,6 +551,16 @@ void CompilationEngine::compileExpression()
 
     compileTerm();
 
+    while (tokenizer.isOperator(tokenizer.peek())) {
+        tokenizer.advance();
+
+        outputFile << "<" << tokenizer.tokenType() << ">"
+            << tokenizer.symbol()
+            << "</" << tokenizer.tokenType() << ">" << endl;
+
+        compileTerm();
+    }
+
     outputFile << "</expression>" << endl;
 }
 
@@ -548,9 +569,105 @@ void CompilationEngine::compileTerm()
     outputFile << "<term>" << endl;
 
     tokenizer.advance();
-    outputFile << "<" << tokenizer.tokenType() << ">"
-        << tokenizer.getToken()
-        << "</" << tokenizer.tokenType() << ">" << endl;
+    if (tokenizer.tokenType() == TokenType::INT_CONST) {
+        outputFile << "<" << tokenizer.tokenType() << ">"
+            << tokenizer.intVal()
+            << "</" << tokenizer.tokenType() << ">" << endl;
+    } else if (tokenizer.tokenType() == TokenType::STRING_CONST) {
+        outputFile << "<" << tokenizer.tokenType() << ">"
+            << tokenizer.stringVal()
+            << "</" << tokenizer.tokenType() << ">" << endl;
+    } else if (tokenizer.tokenType() == TokenType::KEYWORD &&
+        (tokenizer.keywordType() == KeywordType::TRUE ||
+        tokenizer.keywordType() == KeywordType::FALSE ||
+        tokenizer.keywordType() == KeywordType::NULL ||
+        tokenizer.keywordType() == KeywordType::THIS)) {
+        outputFile << "<" << tokenizer.tokenType() << ">"
+            << tokenizer.getToken()
+            << "</" << tokenizer.tokenType() << ">" << endl;
+    } else if (tokenizer.tokenType() == TokenType::IDENTIFIER) {
+        outputFile << "<" << tokenizer.tokenType() << ">"
+            << tokenizer.identifier()
+            << "</" << tokenizer.tokenType() << ">" << endl;
+
+        if (tokenizer.peek() == "[") {
+            tokenizer.advance();
+            outputFile << "<" << tokenizer.tokenType() << ">"
+                << tokenizer.symbol()
+                << "</" << tokenizer.tokenType() << ">" << endl;
+
+            compileExpression();
+
+            tokenizer.advance();
+            outputFile << "<" << tokenizer.tokenType() << ">"
+                << tokenizer.symbol()
+                << "</" << tokenizer.tokenType() << ">" << endl;
+        }
+
+        if (tokenizer.peek() == "(") {
+            tokenizer.advance();
+            outputFile << "<" << tokenizer.tokenType() << ">"
+                << tokenizer.symbol()
+                << "</" << tokenizer.tokenType() << ">" << endl;
+
+            compileExpressionList();
+
+            tokenizer.advance();
+            outputFile << "<" << tokenizer.tokenType() << ">"
+                << tokenizer.symbol()
+                << "</" << tokenizer.tokenType() << ">" << endl;
+        }
+
+        if (tokenizer.peek() == ".") {
+            tokenizer.advance();
+
+            outputFile << "<" << tokenizer.tokenType() << ">"
+                << tokenizer.symbol()
+                << "</" << tokenizer.tokenType() << ">" << endl;
+
+            tokenizer.advance();
+            BOOST_ASSERT(tokenizer.tokenType() == TokenType::IDENTIFIER);
+
+            outputFile << "<" << tokenizer.tokenType() << ">"
+                << tokenizer.identifier()
+                << "</" << tokenizer.tokenType() << ">" << endl;
+
+            tokenizer.advance();
+            BOOST_ASSERT(tokenizer.tokenType() == TokenType::SYMBOL);
+
+            outputFile << "<" << tokenizer.tokenType() << ">"
+                << tokenizer.symbol()
+                << "</" << tokenizer.tokenType() << ">" << endl;
+
+            compileExpressionList();
+
+            tokenizer.advance();
+            BOOST_ASSERT(tokenizer.tokenType() == TokenType::SYMBOL);
+
+            outputFile << "<" << tokenizer.tokenType() << ">"
+                << tokenizer.symbol()
+                << "</" << tokenizer.tokenType() << ">" << endl;
+        }
+    } else if (tokenizer.tokenType() == TokenType::SYMBOL && tokenizer.symbol() == "(") {
+        outputFile << "<" << tokenizer.tokenType() << ">"
+            << tokenizer.symbol()
+            << "</" << tokenizer.tokenType() << ">" << endl;
+
+        compileExpression();
+
+        tokenizer.advance();
+        BOOST_ASSERT(tokenizer.tokenType() == TokenType::SYMBOL);
+
+        outputFile << "<" << tokenizer.tokenType() << ">"
+            << tokenizer.symbol()
+            << "</" << tokenizer.tokenType() << ">" << endl;
+    } else if (tokenizer.tokenType() == TokenType::SYMBOL && tokenizer.isUnaryOperator(tokenizer.getToken())) {
+        outputFile << "<" << tokenizer.tokenType() << ">"
+            << tokenizer.symbol()
+            << "</" << tokenizer.tokenType() << ">" << endl;
+
+        compileTerm();
+    }
 
     outputFile << "</term>" << endl;
 }

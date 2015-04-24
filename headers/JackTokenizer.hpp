@@ -22,6 +22,8 @@ class JackTokenizer {
         string identifier();
         int intVal();
         string stringVal();
+        bool isOperator(string const&);
+        bool isUnaryOperator(string const&);
         const TokenDeque& getTokens() const { return tokens; }
     private:
         void tokenize();
@@ -35,6 +37,8 @@ class JackTokenizer {
         string currentToken;
         static VecStr const keywords;
         static string const symbols;
+        static string const operators;
+        static string const unaryOps;
 };
 
 #endif

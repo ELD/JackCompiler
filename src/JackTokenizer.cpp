@@ -1,7 +1,12 @@
 #include "../headers/JackTokenizer.hpp"
 
 VecStr const JackTokenizer::keywords{"class", "constructor", "function", "method", "field", "static", "var", "int", "char", "boolean", "void", "true", "false", "null", "this", "let", "do", "if", "else", "while", "return"};
+
 string const JackTokenizer::symbols{"{ } ( ) [ ] . , ; + - * / & | < > = ~"};
+
+string const JackTokenizer::operators{"+ - * / & < > ="};
+
+string const JackTokenizer::unaryOps{"- ~"};
 
 /*********** PUBLIC METHODS ***********/
 JackTokenizer::JackTokenizer(istream& input) : file(input), currentToken("")
@@ -83,6 +88,24 @@ string JackTokenizer::stringVal()
     auto lastQuote = currentToken.find_last_of("\"");
 
     return currentToken.substr(firstQuote + 1, lastQuote - 1);
+}
+
+bool JackTokenizer::isOperator(string const& token)
+{
+    if (operators.find(token) != string::npos) {
+        return true;
+    }
+
+    return false;
+}
+
+bool JackTokenizer::isUnaryOperator(string const& token)
+{
+    if (unaryOps.find(token) != string::npos) {
+        return true;
+    }
+
+    return false;
 }
 
 /*********** PRIVATE METHODS ***********/
