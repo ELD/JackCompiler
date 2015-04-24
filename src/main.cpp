@@ -1,5 +1,6 @@
-#include "../headers/includes.h"
-#include "../headers/JackTokenizer.h"
+#include "../headers/includes.hpp"
+#include "../headers/JackTokenizer.hpp"
+#include "../headers/CompilationEngine.hpp"
 
 void printTokenXml(string, JackTokenizer&);
 
@@ -10,33 +11,20 @@ int main(int argc, char** argv)
         return -1;
     }
 
-    string inputFile{argv[1]};
-    JackTokenizer tokens(inputFile);
-
-    printTokenXml("OutT.xml", tokens);
-
-    // while (tokens.hasMoreTokens()) {
-    //     auto token = tokens.nextToken();
-    //     auto tokenType = tokens.tokenType();
-    //     if (tokenType == TokenType::KEYWORD) {
-    //         auto keyword = tokens.keywordType();
-    //         cout << "Type: " << tokenType << "\tKeyword: " << keyword << "\tToken: " << token << endl;
-    //     } else if (tokenType == TokenType::SYMBOL) {
-    //         auto symbol = tokens.symbol();
-    //         cout << "Type: " << tokenType << "\tSymbol: " << symbol << "\tToken: " << token << endl;
-    //     } else if (tokenType == TokenType::IDENTIFIER) {
-    //         auto identifier = tokens.identifier();
-    //         cout << "Type: " << tokenType << "\tIdentifier: " << identifier << "\tToken: " << token << endl;
-    //     } else if (tokenType == TokenType::INT_CONST) {
-    //         auto intConst = tokens.intVal();
-    //         cout << "Type: " << tokenType << "\tInteger Constant: " << intConst << "\tToken: " << token << endl;
-    //     } else if (tokenType == TokenType::STRING_CONST) {
-    //         auto stringConst = tokens.stringVal();
-    //         cout << "Type: " << tokenType << "\tString Constant: " << stringConst << "\tToken: " << token << endl;
-    //     } else {
-    //         cout << "Type: " << tokenType << "\tToken: " << token << endl;
-    //     }
-    // }
+    auto files = getFilesInProject(argv[1]);
+    for (auto& file : files) {
+        // ifstream inputFile{file.string()};
+        // JackTokenizer tokens(inputFile);
+        // string filename = file.filename().string();
+        // filename = filename.substr(0, filename.find_last_of(".")) + "T.xml";
+        // cout << "input: " << file.string() << "\toutput: " << filename << endl;
+        // printTokenXml(filename, tokens);
+        ifstream inputFile{file.string()};
+        string filename = file.filename().string();
+        filename = filename.substr(0, filename.find_last_of(".")) + ".xml";
+        ofstream outputFile{filename};
+        CompilationEngine jackCompiler(inputFile, outputFile);
+    }
 }
 
 void printTokenXml(string outFileName, JackTokenizer& tokens)
@@ -44,20 +32,12 @@ void printTokenXml(string outFileName, JackTokenizer& tokens)
     ofstream outXml(outFileName);
     outXml << "<tokens>" << endl;
     while (tokens.hasMoreTokens()) {
-        auto token = tokens.nextToken();
+        tokens.advance();
         auto tokenType = tokens.tokenType();
         if (tokenType == TokenType::SYMBOL) {
-            if (token == ">") {
-                outXml << "<" << tokenType << "> &gt; </" << tokenType << ">" << endl;
-            } else if (token == "<") {
-                outXml << "<" << tokenType << "> &lt; </" << tokenType << ">" << endl;
-            } else if (token == "&") {
-                outXml << "<" << tokenType << "> &amp; </" << tokenType << ">" << endl;
-            } else {
-                outXml << "<" << tokenType << ">" << tokens.symbol() << "</" << tokenType << ">" << endl;
-            }
+            outXml << "<" << tokenType << ">" << tokens.symbol() << "</" << tokenType << ">" << endl;
         } else if (tokenType == TokenType::KEYWORD) {
-            outXml << "<" << tokenType << ">" << token << "</" << tokenType << ">" << endl;
+            outXml << "<" << tokenType << ">" << tokens.keywordType() << "</" << tokenType << ">" << endl;
         } else if (tokenType == TokenType::IDENTIFIER) {
             outXml << "<" << tokenType << ">" << tokens.identifier() << "</" << tokenType << ">" << endl;
         } else if (tokenType == TokenType::INT_CONST) {
