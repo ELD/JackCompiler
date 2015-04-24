@@ -542,6 +542,36 @@ void CompilationEngine::compileIf()
         << tokenizer.symbol()
         << "</" << tokenizer.tokenType() << ">" << endl;
 
+    if (tokenizer.peek() == "else") {
+        tokenizer.advance();
+
+        outputFile << "<else>" << endl;
+
+        outputFile << "<" << tokenizer.tokenType() << ">"
+            << tokenizer.getToken()
+            << "</" << tokenizer.tokenType() << ">" << endl;
+
+        tokenizer.advance();
+        BOOST_ASSERT(tokenizer.tokenType() == TokenType::SYMBOL);
+        BOOST_ASSERT(tokenizer.symbol() == "{");
+
+        outputFile << "<" << tokenizer.tokenType() << ">"
+            << tokenizer.symbol()
+            << "</" << tokenizer.tokenType() << ">" << endl;
+
+        compileStatements();
+
+        tokenizer.advance();
+        BOOST_ASSERT(tokenizer.tokenType() == TokenType::SYMBOL);
+        BOOST_ASSERT(tokenizer.symbol() == "}");
+
+        outputFile << "<" << tokenizer.tokenType() << ">"
+            << tokenizer.symbol()
+            << "</" << tokenizer.tokenType() << ">" << endl;
+
+        outputFile << "</else>" << endl;
+    }
+
     outputFile << "</ifStatement>" << endl;
 }
 
