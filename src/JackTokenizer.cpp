@@ -4,7 +4,7 @@ VecStr const JackTokenizer::keywords{"class", "constructor", "function", "method
 
 string const JackTokenizer::symbols{"{ } ( ) [ ] . , ; + - * / & | < > = ~"};
 
-string const JackTokenizer::operators{"+ - * / & < > ="};
+string const JackTokenizer::operators{"+ - * / | & < > ="};
 
 string const JackTokenizer::unaryOps{"- ~"};
 
@@ -132,7 +132,7 @@ void JackTokenizer::tokenize()
 
         bool inStringLiteral{false};
         string stringLiteral{""};
-        boost::char_separator<char> c{" ","~.=()[];,"};
+        boost::char_separator<char> c{" ","~.=()[];,|"};
         boost::tokenizer<boost::char_separator<char>> tizer{line, c};
         for (const auto& t : tizer) {
             auto stringLiteralLoc = t.find("\"");
