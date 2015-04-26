@@ -13,9 +13,10 @@
 #include <sstream>
 #include <vector>
 #include <utility>
-#include <cassert>
+#include <map>
 #include "token_types.hpp"
 #include "keyword_types.hpp"
+#include "symbol_types.hpp"
 #include "utilities.hpp"
 
 using namespace boost;

@@ -62,11 +62,19 @@ void CompilationEngine::compileClass()
 
 void CompilationEngine::compileClassVarDec()
 {
+    SymbolTypes symbolKind;
+    string symbolType;
     outputFile << "<classVarDec>" << endl;
 
     tokenizer.advance();
     BOOST_ASSERT(tokenizer.tokenType() == TokenType::KEYWORD);
     BOOST_ASSERT(tokenizer.keywordType() == KeywordType::FIELD || tokenizer.keywordType() == KeywordType::STATIC);
+
+    if (tokenizer.keywordType() == KeywordType::FIELD) {
+        symbolKind = SymbolTypes::FIELD;
+    } else {
+       symbolKind = SymbolTypes::STATIC;
+    }
 
     outputFile << "<" << tokenizer.tokenType() << ">"
         << tokenizer.keywordType()
@@ -74,6 +82,7 @@ void CompilationEngine::compileClassVarDec()
 
     tokenizer.advance();
     BOOST_ASSERT(tokenizer.tokenType() == TokenType::KEYWORD || tokenizer.tokenType() == TokenType::IDENTIFIER);
+    symbolType = tokenizer.getToken();
 
     outputFile << "<" << tokenizer.tokenType() << ">"
         << tokenizer.getToken()
@@ -81,6 +90,7 @@ void CompilationEngine::compileClassVarDec()
 
     tokenizer.advance();
     BOOST_ASSERT(tokenizer.tokenType() == TokenType::IDENTIFIER);
+    symbolTable.define(tokenizer.identifier(), symbolType, symbolKind);
 
     outputFile << "<" << tokenizer.tokenType() << ">"
         << tokenizer.identifier()
@@ -97,12 +107,15 @@ void CompilationEngine::compileClassVarDec()
 
         BOOST_ASSERT(tokenizer.tokenType() == TokenType::SYMBOL);
         BOOST_ASSERT(tokenizer.symbol() == ",");
+
         outputFile << "<" << tokenizer.tokenType() << ">"
             << tokenizer.symbol()
             << "</" << tokenizer.tokenType() << ">" << endl;
 
         tokenizer.advance();
         BOOST_ASSERT(tokenizer.tokenType() == TokenType::IDENTIFIER);
+        symbolTable.define(tokenizer.identifier(), symbolType, symbolKind);
+
         outputFile << "<" << tokenizer.tokenType() << ">"
             << tokenizer.identifier()
             << "</" << tokenizer.tokenType() << ">" << endl;
@@ -113,6 +126,9 @@ void CompilationEngine::compileClassVarDec()
 
 void CompilationEngine::compileSubroutine()
 {
+    // Reset the symbol table for another subroutine
+    symbolTable.startSubroutine();
+
     outputFile << "<subroutineDec>" << endl;
 
     tokenizer.advance();

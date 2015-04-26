@@ -3,6 +3,7 @@
 
 #include "includes.hpp"
 #include "JackTokenizer.hpp"
+#include "SymbolTable.hpp"
 
 class CompilationEngine {
 public:
@@ -25,6 +26,7 @@ private:
 
     ostream& outputFile;
     JackTokenizer tokenizer;
+    SymbolTable symbolTable;
     string className;
 };
 
