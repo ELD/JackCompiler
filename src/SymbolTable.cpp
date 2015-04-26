@@ -7,6 +7,7 @@ SymbolTable::SymbolTable() : classVarCounter(0), localVarCounter(0)
 SymbolTable::~SymbolTable()
 {
     dumpClassVars();
+    dumpLocalVars();
 }
 
 void SymbolTable::startSubroutine()
@@ -115,6 +116,7 @@ void SymbolTable::dumpClassVars()
 
 void SymbolTable::dumpLocalVars()
 {
+    cout << "Dumping local vars. Size: " << localVars.size() << endl;
     for (auto const& kv : localVars) {
         cout << "Name: " << kv.first;
         cout << "\tType: " << get<0>(kv.second)
