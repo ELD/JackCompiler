@@ -6,13 +6,13 @@ SymbolTable::SymbolTable() : classVarCounter(0), localVarCounter(0)
 
 SymbolTable::~SymbolTable()
 {
-    dumpClassVars();
-    dumpLocalVars();
+    // dumpClassVars();
+    // dumpLocalVars();
 }
 
 void SymbolTable::startSubroutine()
 {
-    dumpLocalVars();
+    // dumpLocalVars();
 
     if (localVars.size() > 0) {
         localVars.clear();

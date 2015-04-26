@@ -4,6 +4,7 @@
 #include "includes.hpp"
 #include "JackTokenizer.hpp"
 #include "SymbolTable.hpp"
+#include "VMWriter.hpp"
 
 class CompilationEngine {
 public:
@@ -24,10 +25,11 @@ private:
     void compileTerm();
     void compileExpressionList();
 
-    ostream& outputFile;
+    // ostream& outputFile;
     JackTokenizer tokenizer;
     SymbolTable symbolTable;
-    string className;
+    VMWriter writer;
+    string className, currentSubroutineName;
 };
 
 #endif

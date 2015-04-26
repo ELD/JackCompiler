@@ -17,6 +17,8 @@
 #include "token_types.hpp"
 #include "keyword_types.hpp"
 #include "symbol_types.hpp"
+#include "segment_types.hpp"
+#include "operation_types.hpp"
 #include "utilities.hpp"
 
 using namespace boost;

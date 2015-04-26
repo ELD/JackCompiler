@@ -21,7 +21,7 @@ int main(int argc, char** argv)
         // printTokenXml(filename, tokens);
         ifstream inputFile{file.string()};
         string filename = file.filename().string();
-        filename = filename.substr(0, filename.find_last_of(".")) + ".xml";
+        filename = filename.substr(0, filename.find_last_of(".")) + ".vm";
         ofstream outputFile{filename};
         CompilationEngine jackCompiler(inputFile, outputFile);
     }
