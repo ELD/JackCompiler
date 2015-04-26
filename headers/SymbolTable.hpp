@@ -8,7 +8,6 @@ using SymbolMap = map<string, tuple<string, SymbolTypes, int>>;
 class SymbolTable {
 public:
     SymbolTable();
-    ~SymbolTable();
     void startSubroutine();
     void define(string const&, string const&, SymbolTypes const&);
     int varCount(SymbolTypes const&);
@@ -24,6 +23,7 @@ private:
 
     int classVarCounter;
     int localVarCounter;
+    int argVarCounter;
 };
 
 #endif

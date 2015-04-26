@@ -25,6 +25,8 @@ private:
     void compileTerm();
     void compileExpressionList();
 
+    SegmentTypes memorySegmentFromSymbolTypes(SymbolTypes const&);
+
     // ostream& outputFile;
     JackTokenizer tokenizer;
     SymbolTable symbolTable;

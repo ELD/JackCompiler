@@ -130,6 +130,7 @@ void CompilationEngine::compileSubroutine()
 {
     // Reset the symbol table for another subroutine
     symbolTable.startSubroutine();
+    KeywordType subroutineType;
 
     // outputFile << "<subroutineDec>" << endl;
 
@@ -138,6 +139,8 @@ void CompilationEngine::compileSubroutine()
     BOOST_ASSERT(tokenizer.keywordType() == KeywordType::METHOD ||
         tokenizer.keywordType() == KeywordType::FUNCTION ||
         tokenizer.keywordType() == KeywordType::CONSTRUCTOR);
+    subroutineType = tokenizer.keywordType();
+
 
     // outputFile << "<" << tokenizer.tokenType() << ">"
     //     << tokenizer.keywordType()
@@ -209,6 +212,15 @@ void CompilationEngine::compileSubroutine()
             compileVarDec();
         } else {
             writer.writeFunction(className + "." + currentSubroutineName, symbolTable.varCount(SymbolTypes::VAR));
+        if (subroutineType == KeywordType::CONSTRUCTOR) {
+            int memCount = symbolTable.varCount(SymbolTypes::FIELD);
+            writer.writePush(SegmentTypes::CONST, memCount);
+            writer.writeCall("Memory.alloc", 1);
+            writer.writePop(SegmentTypes::POINTER, 0);
+        } else if (subroutineType == KeywordType::METHOD) {
+            writer.writePush(SegmentTypes::ARG, 0);
+            writer.writePop(SegmentTypes::POINTER, 0);
+        }
             compileStatements();
         }
     }
@@ -382,15 +394,7 @@ void CompilationEngine::compileDo()
             SymbolTypes segment = symbolTable.kindOf(subroutineClassName);
             type = symbolTable.typeOf(subroutineClassName);
             int offset = symbolTable.indexOf(subroutineClassName);
-            if (segment == SymbolTypes::STATIC) {
-                writer.writePush(SegmentTypes::STATIC, offset);
-            } else if (segment == SymbolTypes::FIELD) {
-                writer.writePush(SegmentTypes::THIS, offset);
-            } else if (segment == SymbolTypes::ARG) {
-                writer.writePush(SegmentTypes::ARG, offset);
-            } else if (segment == SymbolTypes::VAR) {
-                writer.writePush(SegmentTypes::LOCAL, offset);
-            }
+            writer.writePush(memorySegmentFromSymbolTypes(segment), offset);
             ++argCount;
         }
 
@@ -450,6 +454,7 @@ void CompilationEngine::compileDo()
 
 void CompilationEngine::compileLet()
 {
+    string varName;
     // outputFile << "<letStatement>" << endl;
 
     tokenizer.advance();
@@ -460,6 +465,7 @@ void CompilationEngine::compileLet()
 
     tokenizer.advance();
     BOOST_ASSERT(tokenizer.tokenType() == TokenType::IDENTIFIER);
+    varName = tokenizer.identifier();
 
     // outputFile << "<" << tokenizer.tokenType() << ">"
     //     << tokenizer.identifier()
@@ -498,6 +504,8 @@ void CompilationEngine::compileLet()
     BOOST_ASSERT(tokenizer.tokenType() == TokenType::SYMBOL);
     BOOST_ASSERT(tokenizer.symbol() == ";");
 
+    writer.writePop(memorySegmentFromSymbolTypes(symbolTable.kindOf(varName)), symbolTable.indexOf(varName));
+
     // outputFile << "<" << tokenizer.tokenType() << ">"
     //     << tokenizer.symbol()
     //     << "</" << tokenizer.tokenType() << ">" << endl;
@@ -507,6 +515,10 @@ void CompilationEngine::compileLet()
 
 void CompilationEngine::compileWhile()
 {
+    int whileCount = writer.getWhileCounter();
+    string whileExpLabel = (stringstream() << "WHILE_EXP" << whileCount).str();
+    string whileEndLabel = (stringstream() << "WHILE_END" << whileCount).str();
+    writer.incrementWhileCounter();
     // outputFile << "<whileStatement>" << endl;
 
     tokenizer.advance();
@@ -524,7 +536,12 @@ void CompilationEngine::compileWhile()
     //     << tokenizer.symbol()
     //     << "</" << tokenizer.tokenType() << ">" << endl;
 
+    writer.writeLabel(whileExpLabel);
+
     compileExpression();
+
+    writer.writeArithmetic(OperationTypes::NOT);
+    writer.writeIf(whileEndLabel);
 
     tokenizer.advance();
     BOOST_ASSERT(tokenizer.tokenType() == TokenType::SYMBOL);
@@ -547,6 +564,9 @@ void CompilationEngine::compileWhile()
     tokenizer.advance();
     BOOST_ASSERT(tokenizer.tokenType() == TokenType::SYMBOL);
     BOOST_ASSERT(tokenizer.symbol() == "}");
+
+    writer.writeGoto(whileExpLabel);
+    writer.writeLabel(whileEndLabel);
 
     // outputFile << "<" << tokenizer.tokenType() << ">"
     //     << tokenizer.symbol()
@@ -584,6 +604,10 @@ void CompilationEngine::compileReturn()
 
 void CompilationEngine::compileIf()
 {
+    int ifElseCount = writer.getIfElseCounter();
+    string ifFalseLabel = (stringstream() << "IF_FALSE" << ifElseCount).str();
+    string ifEndLabel = (stringstream() << "IF_END" << ifElseCount).str();
+    writer.incrementIfElseCounter();
     // outputFile << "<ifStatement>" << endl;
 
     tokenizer.advance();
@@ -601,6 +625,7 @@ void CompilationEngine::compileIf()
     //     << "</" << tokenizer.tokenType() << ">" << endl;
 
     compileExpression();
+    writer.writeArithmetic(OperationTypes::NOT);
 
     tokenizer.advance();
     BOOST_ASSERT(tokenizer.tokenType() == TokenType::SYMBOL);
@@ -614,6 +639,8 @@ void CompilationEngine::compileIf()
     BOOST_ASSERT(tokenizer.tokenType() == TokenType::SYMBOL);
     BOOST_ASSERT(tokenizer.symbol() == "{");
 
+    writer.writeIf(ifFalseLabel);
+
     // outputFile << "<" << tokenizer.tokenType() << ">"
     //     << tokenizer.symbol()
     //     << "</" << tokenizer.tokenType() << ">" << endl;
@@ -624,10 +651,13 @@ void CompilationEngine::compileIf()
     BOOST_ASSERT(tokenizer.tokenType() == TokenType::SYMBOL);
     BOOST_ASSERT(tokenizer.symbol() == "}");
 
+    writer.writeGoto(ifEndLabel);
+
     // outputFile << "<" << tokenizer.tokenType() << ">"
     //     << tokenizer.symbol()
     //     << "</" << tokenizer.tokenType() << ">" << endl;
 
+    writer.writeLabel(ifFalseLabel);
     if (tokenizer.peek() == "else") {
         tokenizer.advance();
 
@@ -658,6 +688,8 @@ void CompilationEngine::compileIf()
         // outputFile << "</else>" << endl;
     }
 
+    writer.writeLabel(ifEndLabel);
+
     // outputFile << "</ifStatement>" << endl;
 }
 
@@ -683,11 +715,11 @@ void CompilationEngine::compileExpression()
             writer.writeArithmetic(OperationTypes::SUB);
         } else if (op == "=") {
             writer.writeArithmetic(OperationTypes::EQ);
-        } else if (op == "<") {
+        } else if (op == "&lt;") {
             writer.writeArithmetic(OperationTypes::LT);
-        } else if (op == ">") {
+        } else if (op == "&gt;") {
             writer.writeArithmetic(OperationTypes::GT);
-        } else if (op == "&") {
+        } else if (op == "&amp;") {
             writer.writeArithmetic(OperationTypes::AND);
         } else if (op == "|") {
             writer.writeArithmetic(OperationTypes::OR);
@@ -719,6 +751,7 @@ void CompilationEngine::compileTerm()
         //     << tokenizer.intVal()
         //     << "</" << tokenizer.tokenType() << ">" << endl;
     } else if (tokenizer.tokenType() == TokenType::STRING_CONST) {
+        writer.writeStringConstant(tokenizer.stringVal());
         // outputFile << "<" << tokenizer.tokenType() << ">"
         //     << tokenizer.stringVal()
         //     << "</" << tokenizer.tokenType() << ">" << endl;
@@ -727,32 +760,36 @@ void CompilationEngine::compileTerm()
         tokenizer.keywordType() == KeywordType::FALSE ||
         tokenizer.keywordType() == KeywordType::NULL ||
         tokenizer.keywordType() == KeywordType::THIS)) {
+            if (tokenizer.keywordType() == KeywordType::TRUE) {
+                writer.writePush(SegmentTypes::CONST, 0);
+                writer.writeArithmetic(OperationTypes::NOT);
+            } else if (tokenizer.keywordType() == KeywordType::FALSE) {
+                writer.writePush(SegmentTypes::CONST, 0);
+            } else if (tokenizer.keywordType() == KeywordType::THIS) {
+                writer.writePush(SegmentTypes::POINTER, 0);
+            } else {
+                writer.writePush(SegmentTypes::CONST, 0);
+            }
         // outputFile << "<" << tokenizer.tokenType() << ">"
         //     << tokenizer.getToken()
         //     << "</" << tokenizer.tokenType() << ">" << endl;
     } else if (tokenizer.tokenType() == TokenType::IDENTIFIER) {
+        string subroutineClassName, subroutineName, type;
+        bool subroutineCall = false;
+        bool localCall = true;
+
         // outputFile << "<" << tokenizer.tokenType() << ">"
         //     << tokenizer.identifier()
         //     << "</" << tokenizer.tokenType() << ">" << endl;
 
-        if (tokenizer.peek() == "[") {
-            tokenizer.advance();
-
-            // outputFile << "<" << tokenizer.tokenType() << ">"
-            //     << tokenizer.symbol()
-            //     << "</" << tokenizer.tokenType() << ">" << endl;
-
-            compileExpression();
-
-            tokenizer.advance();
-
-            // outputFile << "<" << tokenizer.tokenType() << ">"
-            //     << tokenizer.symbol()
-            //     << "</" << tokenizer.tokenType() << ">" << endl;
-        }
-
         if (tokenizer.peek() == "(") {
+            argCount = 0;
+            subroutineCall = true;
+            subroutineName = tokenizer.identifier();
             tokenizer.advance();
+
+            writer.writePush(SegmentTypes::POINTER, 0);
+            ++argCount;
 
             // outputFile << "<" << tokenizer.tokenType() << ">"
             //     << tokenizer.symbol()
@@ -768,7 +805,11 @@ void CompilationEngine::compileTerm()
         }
 
         if (tokenizer.peek() == ".") {
+            argCount = 0;
+            subroutineCall = true;
+            subroutineClassName = tokenizer.identifier();
             tokenizer.advance();
+            localCall = false;
 
             // outputFile << "<" << tokenizer.tokenType() << ">"
             //     << tokenizer.symbol()
@@ -776,6 +817,15 @@ void CompilationEngine::compileTerm()
 
             tokenizer.advance();
             BOOST_ASSERT(tokenizer.tokenType() == TokenType::IDENTIFIER);
+            subroutineName = tokenizer.identifier();
+
+            if (symbolTable.indexOf(subroutineClassName) != -1) {
+                SymbolTypes segment = symbolTable.kindOf(subroutineClassName);
+                type = symbolTable.typeOf(subroutineClassName);
+                int offset = symbolTable.indexOf(subroutineClassName);
+                writer.writePush(memorySegmentFromSymbolTypes(segment), offset);
+                ++argCount;
+            }
 
             // outputFile << "<" << tokenizer.tokenType() << ">"
             //     << tokenizer.identifier()
@@ -792,6 +842,36 @@ void CompilationEngine::compileTerm()
 
             tokenizer.advance();
             BOOST_ASSERT(tokenizer.tokenType() == TokenType::SYMBOL);
+
+            // outputFile << "<" << tokenizer.tokenType() << ">"
+            //     << tokenizer.symbol()
+            //     << "</" << tokenizer.tokenType() << ">" << endl;
+        }
+
+        if (subroutineCall && localCall) {
+            writer.writeCall(className + "." + subroutineName, argCount);
+            argCount = 0;
+        } else if (subroutineCall) {
+            if (!type.empty()) {
+                writer.writeCall(type + "." + subroutineName, argCount);
+            } else {
+                writer.writeCall(subroutineClassName + "." + subroutineName, argCount);
+            }
+            argCount = 0;
+        } else {
+            writer.writePush(memorySegmentFromSymbolTypes(symbolTable.kindOf(tokenizer.identifier())), symbolTable.indexOf(tokenizer.identifier()));
+        }
+
+        if (tokenizer.peek() == "[") {
+            tokenizer.advance();
+
+            // outputFile << "<" << tokenizer.tokenType() << ">"
+            //     << tokenizer.symbol()
+            //     << "</" << tokenizer.tokenType() << ">" << endl;
+
+            compileExpression();
+
+            tokenizer.advance();
 
             // outputFile << "<" << tokenizer.tokenType() << ">"
             //     << tokenizer.symbol()
@@ -816,6 +896,7 @@ void CompilationEngine::compileTerm()
         //     << "</" << tokenizer.tokenType() << ">" << endl;
 
         compileTerm();
+        writer.writeArithmetic(OperationTypes::NOT);
     }
 
     // outputFile << "</term>" << endl;
@@ -831,6 +912,7 @@ void CompilationEngine::compileExpressionList()
         }
 
         compileExpression();
+        ++argCount;
 
         if (tokenizer.peek() == ",") {
             tokenizer.advance();
@@ -839,9 +921,20 @@ void CompilationEngine::compileExpressionList()
             //     << tokenizer.symbol()
             //     << "</" << tokenizer.tokenType() << ">" << endl;
         }
-
-        ++argCount;
     }
 
     // outputFile << "</expressionList>" << endl;
+}
+
+SegmentTypes CompilationEngine::memorySegmentFromSymbolTypes(SymbolTypes const& type)
+{
+    if (type == SymbolTypes::STATIC) {
+        return SegmentTypes::STATIC;
+    } else if (type == SymbolTypes::FIELD) {
+        return SegmentTypes::THIS;
+    } else if (type == SymbolTypes::ARG) {
+        return SegmentTypes::ARG;
+    } else {
+        return SegmentTypes::LOCAL;
+    }
 }

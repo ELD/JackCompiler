@@ -1,24 +1,17 @@
 #include "../headers/SymbolTable.hpp"
 
-SymbolTable::SymbolTable() : classVarCounter(0), localVarCounter(0)
+SymbolTable::SymbolTable() : classVarCounter(0), localVarCounter(0), argVarCounter(0)
 {
-}
-
-SymbolTable::~SymbolTable()
-{
-    // dumpClassVars();
-    // dumpLocalVars();
 }
 
 void SymbolTable::startSubroutine()
 {
-    // dumpLocalVars();
-
     if (localVars.size() > 0) {
         localVars.clear();
     }
 
     localVarCounter = 0;
+    argVarCounter = 0;
 }
 
 void SymbolTable::define(string const& name, string const& type, SymbolTypes const& kind)
@@ -27,8 +20,13 @@ void SymbolTable::define(string const& name, string const& type, SymbolTypes con
         classVars.emplace(name, make_tuple(type, kind, classVarCounter));
         ++classVarCounter;
     } else {
-        localVars.emplace(name, make_tuple(type, kind, localVarCounter));
-        ++localVarCounter;
+        if (kind == SymbolTypes::ARG) {
+            localVars.emplace(name, make_tuple(type, kind, argVarCounter));
+            ++argVarCounter;
+        } else {
+            localVars.emplace(name, make_tuple(type, kind, localVarCounter));
+            ++localVarCounter;
+        }
     }
 }
 
