@@ -30,6 +30,7 @@ private:
     SymbolTable symbolTable;
     VMWriter writer;
     string className, currentSubroutineName;
+    int argCount;
 };
 
 #endif

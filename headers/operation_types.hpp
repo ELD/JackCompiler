@@ -13,4 +13,6 @@ enum class OperationTypes {
     NOT
 };
 
+std::ostream& operator<<(std::ostream&, OperationTypes const&);
+
 #endif

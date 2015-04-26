@@ -20,7 +20,7 @@ int main(int argc, char** argv)
         // cout << "input: " << file.string() << "\toutput: " << filename << endl;
         // printTokenXml(filename, tokens);
         ifstream inputFile{file.string()};
-        string filename = file.filename().string();
+        string filename = file.string();
         filename = filename.substr(0, filename.find_last_of(".")) + ".vm";
         ofstream outputFile{filename};
         CompilationEngine jackCompiler(inputFile, outputFile);

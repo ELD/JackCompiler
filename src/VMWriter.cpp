@@ -6,6 +6,36 @@ VMWriter::VMWriter(ostream& out) : vmOut(out)
 
 void VMWriter::writePush(SegmentTypes const& segmentType, int const index)
 {
+    vmOut << "push " << getSegment(segmentType) << " " << index << endl;
+}
+
+void VMWriter::writePop(SegmentTypes const& segmentType, int const index)
+{
+    vmOut << "pop " << getSegment(segmentType) << " " << index << endl;
+}
+
+void VMWriter::writeArithmetic(OperationTypes const& operation)
+{
+    vmOut << operation << endl;
+}
+
+void VMWriter::writeCall(string const& fnName, int const numArgs)
+{
+    vmOut << "call " << fnName << " " << numArgs << endl;
+}
+
+void VMWriter::writeFunction(string const& functionName, int const numLocals)
+{
+    vmOut << "function " << functionName << " " << numLocals << endl;
+}
+
+void VMWriter::writeReturn()
+{
+    vmOut << "return" << endl;
+}
+
+string VMWriter::getSegment(SegmentTypes const& segmentType)
+{
     string segment;
     switch (segmentType) {
         case SegmentTypes::CONST:
@@ -34,15 +64,5 @@ void VMWriter::writePush(SegmentTypes const& segmentType, int const index)
             break;
     }
 
-    vmOut << "push " << segment << " " << index << endl;
-}
-
-void VMWriter::writeFunction(string const& functionName, int const numLocals)
-{
-    vmOut << "function " << functionName << " " << numLocals << endl;
-}
-
-void VMWriter::writeReturn()
-{
-    vmOut << "return" << endl;
+    return segment;
 }
