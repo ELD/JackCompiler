@@ -15,7 +15,7 @@ CXXFLAGS += -std=c++14 -g -O3 -Wall -Weffc++ -pedantic  \
 	-Werror -Wfloat-equal -Wformat=2 \
 	-Wformat-nonliteral -Wformat-security  \
 	-Wformat-y2k \
-	-Wimplicit  -Wimport  -Winit-self  -Winline \
+	-Wimport  -Winit-self  -Winline \
 	-Winvalid-pch   \
 	-Wlong-long \
 	-Wmissing-field-initializers -Wmissing-format-attribute   \
