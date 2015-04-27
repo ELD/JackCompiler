@@ -2,28 +2,27 @@
 #include "../headers/JackTokenizer.hpp"
 #include "../headers/CompilationEngine.hpp"
 
+using FuturesVec = vector<future<void>>;
+
 void printTokenXml(string, JackTokenizer&);
 
 int main(int argc, char** argv)
 {
+    FuturesVec results;
     if (argc < 2) {
         cerr << "Too few arguments!" << endl;
         return -1;
     }
 
     auto files = getFilesInProject(argv[1]);
-    for (auto& file : files) {
-        // ifstream inputFile{file.string()};
-        // JackTokenizer tokens(inputFile);
-        // string filename = file.filename().string();
-        // filename = filename.substr(0, filename.find_last_of(".")) + "T.xml";
-        // cout << "input: " << file.string() << "\toutput: " << filename << endl;
-        // printTokenXml(filename, tokens);
-        ifstream inputFile{file.string()};
-        string filename = file.filename().string();
-        filename = filename.substr(0, filename.find_last_of(".")) + ".xml";
-        ofstream outputFile{filename};
-        CompilationEngine jackCompiler(inputFile, outputFile);
+    for (auto const& file : files) {
+        results.emplace_back(async(launch::async, [&](){
+            ifstream inputFile{file.string()};
+            string filename = file.string();
+            filename = filename.substr(0, filename.find_last_of(".")) + ".vm";
+            ofstream outputFile{filename};
+            CompilationEngine jackCompiler(inputFile, outputFile);
+        }));
     }
 }
 

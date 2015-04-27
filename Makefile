@@ -8,7 +8,7 @@
 #####################################################################
 # Flags
 #####################################################################
-CXXFLAGS += -std=c++1z -g -O -Wall -Weffc++ -pedantic  \
+CXXFLAGS += -std=c++14 -g -O3 -Wall -Weffc++ -pedantic  \
 	-pedantic-errors -Wextra -Waggregate-return -Wcast-align \
 	-Wcast-qual -Wconversion \
 	-Wdisabled-optimization \
