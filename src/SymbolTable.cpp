@@ -1,6 +1,6 @@
 #include "../headers/SymbolTable.hpp"
 
-SymbolTable::SymbolTable() : classVarCounter(0), localVarCounter(0), argVarCounter(0)
+SymbolTable::SymbolTable() : staticCounter(0), classVarCounter(0), localVarCounter(0), argVarCounter(0)
 {
 }
 
@@ -17,8 +17,13 @@ void SymbolTable::startSubroutine()
 void SymbolTable::define(string const& name, string const& type, SymbolTypes const& kind)
 {
     if (kind == SymbolTypes::STATIC || kind == SymbolTypes::FIELD) {
-        classVars.emplace(name, make_tuple(type, kind, classVarCounter));
-        ++classVarCounter;
+        if (kind == SymbolTypes::STATIC) {
+            classVars.emplace(name, make_tuple(type, kind, staticCounter));
+            ++staticCounter;
+        } else {
+            classVars.emplace(name, make_tuple(type, kind, classVarCounter));
+            ++classVarCounter;
+        }
     } else {
         if (kind == SymbolTypes::ARG) {
             localVars.emplace(name, make_tuple(type, kind, argVarCounter));

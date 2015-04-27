@@ -21,6 +21,7 @@ private:
     SymbolMap classVars;
     SymbolMap localVars;
 
+    int staticCounter;
     int classVarCounter;
     int localVarCounter;
     int argVarCounter;

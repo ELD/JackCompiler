@@ -140,6 +140,9 @@ void CompilationEngine::compileSubroutine()
         tokenizer.keywordType() == KeywordType::FUNCTION ||
         tokenizer.keywordType() == KeywordType::CONSTRUCTOR);
     subroutineType = tokenizer.keywordType();
+    if (subroutineType == KeywordType::METHOD) {
+        symbolTable.define("this", "this", SymbolTypes::ARG);
+    }
 
 
     // outputFile << "<" << tokenizer.tokenType() << ">"
@@ -881,6 +884,10 @@ void CompilationEngine::compileTerm()
             //     << "</" << tokenizer.tokenType() << ">" << endl;
 
             compileExpression();
+
+            writer.writeArithmetic(OperationTypes::ADD);
+            writer.writePop(SegmentTypes::POINTER, 1);
+            writer.writePush(SegmentTypes::THAT, 0);
 
             tokenizer.advance();
 
