@@ -7,6 +7,7 @@
 #include <boost/algorithm/string/trim_all.hpp>
 #include <boost/range/iterator_range.hpp>
 #include <iostream>
+#include <future>
 #include <string>
 #include <fstream>
 #include <regex>
