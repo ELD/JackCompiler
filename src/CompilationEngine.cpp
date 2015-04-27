@@ -455,6 +455,7 @@ void CompilationEngine::compileDo()
 void CompilationEngine::compileLet()
 {
     string varName;
+    bool dereference = false;
     // outputFile << "<letStatement>" << endl;
 
     tokenizer.advance();
@@ -472,6 +473,7 @@ void CompilationEngine::compileLet()
     //     << "</" << tokenizer.tokenType() << ">" << endl;
 
     if (tokenizer.peek() == "[") {
+        dereference = true;
         tokenizer.advance();
         BOOST_ASSERT(tokenizer.tokenType() == TokenType::SYMBOL);
 
@@ -480,6 +482,9 @@ void CompilationEngine::compileLet()
         //     << "</" << tokenizer.tokenType() << ">" << endl;
 
         compileExpression();
+        writer.writePush(memorySegmentFromSymbolTypes(symbolTable.kindOf(varName)), symbolTable.indexOf(varName));
+        writer.writeArithmetic(OperationTypes::ADD);
+        writer.writePop(SegmentTypes::TEMP, 0);
 
         tokenizer.advance();
         BOOST_ASSERT(tokenizer.tokenType() == TokenType::SYMBOL);
@@ -504,7 +509,13 @@ void CompilationEngine::compileLet()
     BOOST_ASSERT(tokenizer.tokenType() == TokenType::SYMBOL);
     BOOST_ASSERT(tokenizer.symbol() == ";");
 
-    writer.writePop(memorySegmentFromSymbolTypes(symbolTable.kindOf(varName)), symbolTable.indexOf(varName));
+    if (dereference) {
+        writer.writePush(SegmentTypes::TEMP, 0);
+        writer.writePop(SegmentTypes::POINTER, 1);
+        writer.writePop(SegmentTypes::THAT, 0);
+    } else {
+        writer.writePop(memorySegmentFromSymbolTypes(symbolTable.kindOf(varName)), symbolTable.indexOf(varName));
+    }
 
     // outputFile << "<" << tokenizer.tokenType() << ">"
     //     << tokenizer.symbol()
