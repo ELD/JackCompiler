@@ -1,6 +1,6 @@
 #include "../headers/SymbolTable.hpp"
 
-SymbolTable::SymbolTable() : staticCounter(0), classVarCounter(0), localVarCounter(0), argVarCounter(0)
+SymbolTable::SymbolTable() : classVars(), localVars(), staticCounter(0), classVarCounter(0), localVarCounter(0), argVarCounter(0)
 {
 }
 

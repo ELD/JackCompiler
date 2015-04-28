@@ -9,7 +9,7 @@ string const JackTokenizer::operators{"+ - * / | & < > ="};
 string const JackTokenizer::unaryOps{"- ~"};
 
 /*********** PUBLIC METHODS ***********/
-JackTokenizer::JackTokenizer(istream& input) : file(input), currentToken("")
+JackTokenizer::JackTokenizer(istream& input) : file(input), tokens(), currentToken("")
 {
     tokenize();
 }
