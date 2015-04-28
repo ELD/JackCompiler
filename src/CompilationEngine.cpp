@@ -1,6 +1,6 @@
 #include "../headers/CompilationEngine.hpp"
 
-CompilationEngine::CompilationEngine(istream& input, ostream& output) : tokenizer(input), writer(output), className(""), currentSubroutineName(""), argCount(0)
+CompilationEngine::CompilationEngine(istream& input, ostream& output) : tokenizer(input), symbolTable(), writer(output), className(""), currentSubroutineName(""), argCount(0)
 {
     compileClass();
 }
@@ -335,8 +335,13 @@ void CompilationEngine::compileLet()
 void CompilationEngine::compileWhile()
 {
     int whileCount = writer.getWhileCounter();
-    string whileExpLabel = (stringstream() << "WHILE_EXP" << whileCount).str();
-    string whileEndLabel = (stringstream() << "WHILE_END" << whileCount).str();
+    stringstream whileLabels;
+    whileLabels << "WHILE_EXP" << whileCount;
+    string whileExpLabel = whileLabels.str();
+    whileLabels.clear();
+    whileLabels.str("");
+    whileLabels << "WHILE_END" << whileCount;
+    string whileEndLabel = whileLabels.str();
     writer.incrementWhileCounter();
 
     tokenizer.advance();
@@ -391,8 +396,13 @@ void CompilationEngine::compileReturn()
 void CompilationEngine::compileIf()
 {
     int ifElseCount = writer.getIfElseCounter();
-    string ifFalseLabel = (stringstream() << "IF_FALSE" << ifElseCount).str();
-    string ifEndLabel = (stringstream() << "IF_END" << ifElseCount).str();
+    stringstream ifElseLabels;
+    ifElseLabels << "IF_FALSE" << ifElseCount;
+    string ifFalseLabel = ifElseLabels.str();
+    ifElseLabels.clear();
+    ifElseLabels.str("");
+    ifElseLabels << "IF_END" << ifElseCount;
+    string ifEndLabel = ifElseLabels.str();
     writer.incrementIfElseCounter();
 
     tokenizer.advance();
